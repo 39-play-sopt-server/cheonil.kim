@@ -1,5 +1,6 @@
-package org.sopt;
+package org.sopt.view;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class PostView {
@@ -15,50 +16,51 @@ public class PostView {
         System.out.println("6. 종료");
         System.out.print("선택: ");
 
-        int command = Integer.parseInt(scanner.nextLine());
+        return Integer.parseInt(scanner.nextLine());
+    }
 
-        return command;
+    public void printPostList(List<String> titles){
+        for (int i = 0; i < titles.size(); i++) {
+            System.out.println((i + 1) + ". " + titles.get(i));
+        }
     }
 
     public String scanTitle(){
         System.out.print("제목: ");
-        String title = scanner.nextLine();
-        return title;
+        return scanner.nextLine();
     }
 
     public String scanContent(){
         System.out.print("내용: ");
-        String content = scanner.nextLine();
-        return content;
+        return scanner.nextLine();
     }
 
     public int scanIndex(){
         System.out.print("조회할 게시글 번호: ");
-        int readIndex = Integer.parseInt(scanner.nextLine()) - 1;
-        return readIndex;
+        return Integer.parseInt(scanner.nextLine()) - 1;
     }
 
     public int scanUpdateIndex(){
         System.out.print("수정할 게시글 번호: ");
-        int updateIndex = Integer.parseInt(scanner.nextLine()) - 1;
-        return updateIndex;
+        return Integer.parseInt(scanner.nextLine()) - 1;
     }
 
     public String scanNewTitle(){
         System.out.print("새로운 제목: ");
-        String newTitle = scanner.nextLine();
-        return newTitle;
+        return scanner.nextLine();
     }
 
     public String scanNewContent(){
         System.out.print("새로운 내용: ");
-        String newContent = scanner.nextLine();
-        return newContent;
+        return scanner.nextLine();
     }
 
     public int scanDeleteIndex(){
         System.out.print("삭제할 게시글 번호: ");
-        int deleteIndex = Integer.parseInt(scanner.nextLine()) - 1;
-        return deleteIndex;
+        return Integer.parseInt(scanner.nextLine()) - 1;
+    }
+
+    public void printMessage(String message){
+        System.out.println(message);
     }
 }

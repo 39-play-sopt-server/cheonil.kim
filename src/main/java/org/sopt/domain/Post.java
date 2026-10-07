@@ -1,12 +1,20 @@
 package org.sopt.domain;
 
-public class Post {
-    private String title;
-    private String content;
+import java.time.LocalDate;
 
-    public Post(String title, String content) {
+public class Post {
+    private int id;
+    private String title;
+    private PostCategory category;
+    private String content;
+    private LocalDate writtenDate;
+
+    public Post(int id, String title, PostCategory category, String content, LocalDate writtenDate) {
+        this.id=id;
         this.title = title;
+        this.category=category;
         this.content = content;
+        this.writtenDate=writtenDate;
     }
 
     public String getTitle(){
@@ -15,6 +23,14 @@ public class Post {
 
     public String getContent(){
         return this.content;
+    }
+
+    public PostCategory getCategory(){
+        return this.category;
+    }
+
+    public LocalDate getWrittenDate(){
+        return this.writtenDate;
     }
 
     public void updateTitle(String title){

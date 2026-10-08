@@ -4,34 +4,26 @@ import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PostRepository {
-    List<Post> posts = new ArrayList<>();
+    private final Map<Integer, Post> posts = new LinkedHashMap<>();
     private int idCount=1;
 
     public void addPost(String title, PostCategory category, String content, LocalDate date){
-        posts.add(new Post(idCount++, title, category, content, date));
+        Post post = new Post(idCount, title, category, content, date);
+        posts.put(idCount++, post);
     }
 
     public List<Post> getPostList(){
-        return posts;
+        return List.copyOf(posts.values());
     }
 
-    public boolean isEmpty(){
-        return posts.isEmpty();
+    public Optional<Post> getPost(int id){
+        return Optional.ofNullable(posts.get(id));
     }
 
-    public int getTotalPost(){
-        return posts.size();
-    }
-
-    public Post getPost(int index){
-        return posts.get(index);
-    }
-
-    public void deletePost(int index){
-        posts.remove(index);
+    public void deletePost(int id){
+        posts.remove(id);
     }
 }

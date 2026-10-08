@@ -69,7 +69,7 @@ public class PostController {
     private void getPostList(){
         postView.printMessage("\n=== 게시글 목록 ===");
 
-        List<String> posts = postService.getPostTitleList();
+        List<Post> posts = postService.getPostList();
         if (posts.isEmpty()) {
             postView.printMessage("게시글이 없습니다.");
             return;
@@ -79,9 +79,9 @@ public class PostController {
     }
 
     private void getPost(){
-        int targetIndex = postView.scanIndex();
+        int targetId = postView.scanId();
 
-        Post targetPost = postService.getPost(targetIndex);
+        Post targetPost = postService.getPost(targetId);
 
         postView.printMessage("\n=== 게시글 ===");
         postView.printMessage("제목: " + targetPost.getTitle());
@@ -91,18 +91,18 @@ public class PostController {
     }
 
     private void updatePost(){
-        int updateIndex = postView.scanUpdateIndex();
-        postService.getPost(updateIndex);
+        int updateId = postView.scanUpdateId();
+        postService.getPost(updateId); //게시글이 존재하는지 확인용
 
         String newTitle=postView.scanNewTitle();
         String newContent=postView.scanNewContent();
-        postService.updatePost(updateIndex, newTitle, newContent);
+        postService.updatePost(updateId, newTitle, newContent);
         postView.printMessage("게시글이 수정되었습니다.");
     }
 
     private void deletePost(){
-        int deleteIndex=postView.scanDeleteIndex();
-        postService.deletePost(deleteIndex);
+        int deleteId=postView.scanDeleteId();
+        postService.deletePost(deleteId);
         postView.printMessage("게시글이 삭제되었습니다.");
     }
 }

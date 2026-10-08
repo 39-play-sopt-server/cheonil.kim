@@ -1,5 +1,6 @@
 package org.sopt.view;
 
+import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
 import org.sopt.exception.InvalidPostException;
 
@@ -40,9 +41,9 @@ public class PostView {
         }
     }
 
-    public void printPostList(List<String> titles){
-        for (int i = 0; i < titles.size(); i++) {
-            System.out.println((i + 1) + ". " + titles.get(i));
+    public void printPostList(List<Post> posts){
+        for (Post post : posts) {
+            System.out.println(post.getId() + ". " + post.getTitle());
         }
     }
 
@@ -68,14 +69,14 @@ public class PostView {
         return scan();
     }
 
-    public int scanIndex(){
+    public int scanId(){
         System.out.print("조회할 게시글 번호: ");
-        return scanNumber() - 1;
+        return scanNumber();
     }
 
-    public int scanUpdateIndex(){
+    public int scanUpdateId(){
         System.out.print("수정할 게시글 번호: ");
-        return scanNumber() - 1;
+        return scanNumber();
     }
 
     public String scanNewTitle(){
@@ -88,9 +89,9 @@ public class PostView {
         return scan();
     }
 
-    public int scanDeleteIndex(){
+    public int scanDeleteId(){
         System.out.print("삭제할 게시글 번호: ");
-        return scanNumber() - 1;
+        return scanNumber();
     }
 
     public void printMessage(String message){

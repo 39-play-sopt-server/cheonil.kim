@@ -2,7 +2,6 @@ package org.sopt.service;
 
 import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
-import org.sopt.exception.PostException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.PostRepository;
 
@@ -16,26 +15,23 @@ public class PostService {
         postRepository.addPost(title, category, content, LocalDate.now());
     }
 
-    public List<String> getPostTitleList(){
-        return postRepository.getPostList().stream().map(Post::getTitle).toList();
+    public List<Post> getPostList(){
+        return postRepository.getPostList();
     }
 
-    public Post getPost(int index){
-        if (index < 0 || index >= postRepository.getTotalPost()) {
-            throw new PostNotFoundException();
-        } else {
-            return postRepository.getPost(index);
-        }
+    public Post getPost(int id){
+        return postRepository.getPost(id)
+                .orElseThrow(PostNotFoundException::new);
     }
 
-    public void updatePost(int index, String newTitle, String newContent){
-        Post post = getPost(index);
+    public void updatePost(int id, String newTitle, String newContent){
+        Post post = getPost(id);
         post.updateTitle(newTitle);
         post.updateContent(newContent);
     }
 
-    public void deletePost(int index) {
-        getPost(index);
-        postRepository.deletePost(index);
+    public void deletePost(int id) {
+        getPost(id); //게시글이 존재하는지 확인용
+        postRepository.deletePost(id);
     }
 }

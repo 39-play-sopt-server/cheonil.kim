@@ -1,27 +1,12 @@
 package org.sopt.view;
 
-import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
 import org.sopt.exception.InvalidPostException;
 
-import java.util.List;
 import java.util.Scanner;
 
-public class PostView {
-    Scanner scanner = new Scanner(System.in);
-
-    public int mainView(){
-        System.out.println("\n=== 게시판 ===");
-        System.out.println("1. 게시글 작성");
-        System.out.println("2. 게시글 목록 조회");
-        System.out.println("3. 게시글 단건 조회");
-        System.out.println("4. 게시글 수정");
-        System.out.println("5. 게시글 삭제");
-        System.out.println("6. 종료");
-        System.out.print("선택: ");
-
-        return scanNumber();
-    }
+public class InputView {
+    private final Scanner scanner = new Scanner(System.in);
 
     private String scan(){
         String input=scanner.nextLine();
@@ -41,10 +26,9 @@ public class PostView {
         }
     }
 
-    public void printPostList(List<Post> posts){
-        for (Post post : posts) {
-            System.out.println(post.getId() + ". " + post.getTitle());
-        }
+    public int scanCommand(){
+        System.out.print("선택: ");
+        return scanNumber();
     }
 
     public String scanTitle(){
@@ -92,9 +76,5 @@ public class PostView {
     public int scanDeleteId(){
         System.out.print("삭제할 게시글 번호: ");
         return scanNumber();
-    }
-
-    public void printMessage(String message){
-        System.out.println(message);
     }
 }

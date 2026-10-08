@@ -1,5 +1,6 @@
 package org.sopt.view;
 
+import org.sopt.code.PostErrorCode;
 import org.sopt.domain.PostCategory;
 import org.sopt.exception.InvalidPostException;
 
@@ -11,7 +12,7 @@ public class InputView {
     private String scan(){
         String input=scanner.nextLine();
         if (input.isBlank()) {
-            throw new InvalidPostException("공백은 입력할 수 없습니다.");
+            throw new InvalidPostException(PostErrorCode.BLANK_INPUT);
         } else {
             return input;
         }
@@ -22,7 +23,7 @@ public class InputView {
         try{
             return Integer.parseInt(input);
         } catch(NumberFormatException e){
-            throw new InvalidPostException("숫자를 입력해주세요.");
+            throw new InvalidPostException(PostErrorCode.NOT_A_NUMBER);
         }
     }
 
@@ -44,7 +45,7 @@ public class InputView {
             case "2" -> PostCategory.REVIEW;
             case "3" -> PostCategory.DIARY;
             case "4" -> PostCategory.ETC;
-            default -> throw new InvalidPostException("1,2,3,4 중 하나를 입력하세요.");
+            default -> throw new InvalidPostException(PostErrorCode.INVALID_CATEGORY);
         };
     }
 

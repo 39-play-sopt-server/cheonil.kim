@@ -1,5 +1,6 @@
 package org.sopt.view;
 
+import org.sopt.dto.ApiResponse;
 import org.sopt.dto.PostResponse;
 
 import java.util.List;
@@ -16,14 +17,16 @@ public class OutputView {
         System.out.println("6. 종료");
     }
 
-    public void printPostList(List<PostResponse> posts){
+    public void printPostList(List<?> posts){
         System.out.println("\n=== 게시글 목록 ===");
         if (posts.isEmpty()) {
             System.out.println("게시글이 없습니다.");
             return;
         }
-        for (PostResponse post : posts) {
-            System.out.println(post.id() + ". " + post.title());
+        for (Object item : posts) {
+            if (item instanceof PostResponse post) {
+                System.out.println(post.id() + ". " + post.title());
+            }
         }
     }
 
@@ -37,5 +40,14 @@ public class OutputView {
 
     public void printMessage(String message){
         System.out.println(message);
+    }
+
+    public void printResponse(ApiResponse<?> response){
+        switch (response.data()){
+            case null -> System.out.println(response.message());
+            case PostResponse post -> printPostDetail(post);
+            case List<?> posts -> printPostList(posts);
+            default -> System.out.println(response.message());
+        }
     }
 }

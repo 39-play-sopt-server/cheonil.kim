@@ -9,7 +9,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class PostService {
-    PostRepository postRepository = new PostRepository();
+    PostRepository postRepository;
+
+    public PostService(PostRepository repository) {
+        this.postRepository = repository;
+    }
 
     public void createPost(String title, PostCategory category, String content){
         postRepository.addPost(title, category, content, LocalDate.now());

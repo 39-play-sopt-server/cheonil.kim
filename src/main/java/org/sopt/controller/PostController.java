@@ -9,8 +9,13 @@ import org.sopt.view.PostView;
 import java.util.List;
 
 public class PostController {
-    PostService postService = new PostService();
-    PostView postView = new PostView();
+    PostService postService;
+    PostView postView;
+
+    public PostController(PostService service, PostView postView) {
+        this.postService = service;
+        this.postView = postView;
+    }
 
     public void run() {
         while (true) {

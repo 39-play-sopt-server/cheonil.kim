@@ -1,6 +1,7 @@
 package org.sopt.view;
 
-import org.sopt.domain.Post;
+import org.sopt.dto.PostResponse;
+
 import java.util.List;
 
 public class OutputView {
@@ -15,23 +16,23 @@ public class OutputView {
         System.out.println("6. 종료");
     }
 
-    public void printPostList(List<Post> posts){
+    public void printPostList(List<PostResponse> posts){
         System.out.println("\n=== 게시글 목록 ===");
         if (posts.isEmpty()) {
             System.out.println("게시글이 없습니다.");
             return;
         }
-        for (Post post : posts) {
-            System.out.println(post.getId() + ". " + post.getTitle());
+        for (PostResponse post : posts) {
+            System.out.println(post.id() + ". " + post.title());
         }
     }
 
-    public void printPostDetail(Post post){
+    public void printPostDetail(PostResponse post){
         System.out.println("\n=== 게시글 ===");
-        System.out.println("제목: " + post.getTitle());
-        System.out.println("카테고리: " + post.getCategory());
-        System.out.println("작성일: " + post.getWrittenDate());
-        System.out.println("내용: " + post.getContent());
+        System.out.println("제목: " + post.title());
+        System.out.println("카테고리: " + post.category());
+        System.out.println("작성일: " + post.writtenDate());
+        System.out.println("내용: " + post.content());
     }
 
     public void printMessage(String message){

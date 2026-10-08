@@ -1,13 +1,11 @@
 package org.sopt.controller;
 
-import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
+import org.sopt.dto.PostResponse;
 import org.sopt.exception.PostException;
 import org.sopt.service.PostService;
 import org.sopt.view.InputView;
 import org.sopt.view.OutputView;
-
-import java.util.List;
 
 public class PostController {
     private final PostService postService;
@@ -81,8 +79,7 @@ public class PostController {
 
     private void getPost(){
         int targetId = inputView.scanId();
-
-        Post targetPost = postService.getPost(targetId);
+        PostResponse targetPost = postService.getPost(targetId);
         outputView.printPostDetail(targetPost);
     }
 

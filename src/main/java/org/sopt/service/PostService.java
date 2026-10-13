@@ -6,8 +6,6 @@ import org.sopt.dto.PostResponse;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.PostRepository;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,7 +17,8 @@ public class PostService {
     }
 
     public void createPost(String title, PostCategory category, String content){
-        postRepository.addPost(title, category, content, LocalDate.now());
+        Post post = Post.create(title, category, content);
+        postRepository.save(post);
     }
 
     public List<PostResponse> getPostList(){
@@ -41,8 +40,7 @@ public class PostService {
 
     public void updatePost(Long id, String newTitle, String newContent){
         Post post = findPostById(id);
-        post.updateTitle(newTitle);
-        post.updateContent(newContent);
+        post.update(newTitle, newContent);
     }
 
     public void deletePost(Long id) {

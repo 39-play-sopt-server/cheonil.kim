@@ -3,18 +3,28 @@ package org.sopt.domain;
 import java.time.LocalDate;
 
 public class Post {
-    private final Long id;
+    private Long id;
     private String title;
     private final PostCategory category;
     private String content;
     private final LocalDate writtenDate;
 
-    public Post(Long id, String title, PostCategory category, String content, LocalDate writtenDate) {
-        this.id=id;
+    private Post(String title, PostCategory category, String content) {
         this.title = title;
         this.category=category;
         this.content = content;
-        this.writtenDate=writtenDate;
+        this.writtenDate=LocalDate.now();
+    }
+
+    public static Post create(String title, PostCategory category, String content){
+        return new Post(title, category, content);
+    }
+
+    public void assignId(Long id){
+        if(this.id != null){
+            throw new IllegalStateException("이미 id가 부여된 게시글입니다.");
+        }
+        this.id=id;
     }
 
     public Long getId(){
@@ -37,11 +47,8 @@ public class Post {
         return this.writtenDate;
     }
 
-    public void updateTitle(String title){
+    public void update(String title, String content){
         this.title=title;
-    }
-
-    public void updateContent(String content){
         this.content=content;
     }
 }

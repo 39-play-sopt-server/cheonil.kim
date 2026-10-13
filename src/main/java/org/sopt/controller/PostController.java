@@ -6,9 +6,12 @@ import org.sopt.dto.ApiResponse;
 import org.sopt.dto.PostResponse;
 import org.sopt.exception.PostException;
 import org.sopt.service.PostService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping(path="/api/v1/posts")
 public class PostController {
     private final PostService postService;
 
@@ -16,6 +19,8 @@ public class PostController {
         this.postService = postService;
     }
 
+    @PostMapping
+    //request dto 만들어서 매핑 어노테이션 추가 필요
     public ApiResponse<Void> createPost(String title, PostCategory category, String content){
         try {
             postService.createPost(title, category, content);
@@ -25,7 +30,10 @@ public class PostController {
         }
     }
 
-    public ApiResponse<List<PostResponse>> getPostList(){
+    @GetMapping
+    public ApiResponse<List<PostResponse>> getPostList(
+            @RequestParam(name = "page", defaultValue = "1") Long page
+    ){
         try {
             return ApiResponse.success(PostSuccessCode.POST_READ, postService.getPostList());
         } catch (PostException e) {
@@ -33,7 +41,9 @@ public class PostController {
         }
     }
 
-    public ApiResponse<PostResponse> getPost(int id){
+    @GetMapping(path="/{postId}")
+    public ApiResponse<PostResponse> getPost(
+            @PathVariable(name = "postId") Long id){
         try {
             return ApiResponse.success(PostSuccessCode.POST_READ, postService.getPost(id));
         } catch (PostException e) {
@@ -41,7 +51,8 @@ public class PostController {
         }
     }
 
-    public ApiResponse<Void> updatePost(int id, String newTitle, String newContent){
+    @PutMapping(path="/{postId}")
+    public ApiResponse<Void> updatePost(Long id, String newTitle, String newContent){
         try {
             postService.updatePost(id, newTitle, newContent);
             return ApiResponse.success(PostSuccessCode.POST_UPDATED);
@@ -50,7 +61,9 @@ public class PostController {
         }
     }
 
-    public ApiResponse<Void> deletePost(int id){
+    @DeleteMapping(path="/{postId}")
+    public ApiResponse<Void> deletePost(
+            @PathVariable(name="postId") Long id){
         try {
             postService.deletePost(id);
             return ApiResponse.success(PostSuccessCode.POST_DELETED);

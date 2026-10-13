@@ -3,13 +3,13 @@ package org.sopt.domain;
 import java.time.LocalDate;
 
 public class Post {
-    private int id;
+    private final Long id;
     private String title;
-    private PostCategory category;
+    private final PostCategory category;
     private String content;
-    private LocalDate writtenDate;
+    private final LocalDate writtenDate;
 
-    public Post(int id, String title, PostCategory category, String content, LocalDate writtenDate) {
+    public Post(Long id, String title, PostCategory category, String content, LocalDate writtenDate) {
         this.id=id;
         this.title = title;
         this.category=category;
@@ -17,7 +17,7 @@ public class Post {
         this.writtenDate=writtenDate;
     }
 
-    public int getId(){
+    public Long getId(){
         return this.id;
     }
 

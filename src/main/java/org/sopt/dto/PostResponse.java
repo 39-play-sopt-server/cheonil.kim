@@ -3,7 +3,7 @@ package org.sopt.dto;
 import org.sopt.domain.Post;
 
 public record PostResponse(
-        int id,
+        Long id,
         String title,
         String category,
         String writtenDate,

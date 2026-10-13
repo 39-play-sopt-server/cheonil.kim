@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface PostRepository {
     void addPost(String title, PostCategory category, String content, LocalDate date);
     List<Post> getPostList();
-    Optional<Post> getPost(int id);
-    void deletePost(int id);
+    Optional<Post> getPost(Long id);
+    void deletePost(Long id);
 }

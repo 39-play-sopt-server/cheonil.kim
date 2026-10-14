@@ -2,7 +2,9 @@ package org.sopt.service;
 
 import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
-import org.sopt.dto.PostResponse;
+import org.sopt.dto.request.PostCreateRequest;
+import org.sopt.dto.request.PostUpdateRequest;
+import org.sopt.dto.response.PostResponse;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.PostRepository;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,9 @@ public class PostService {
         this.postRepository = repository;
     }
 
-    public void createPost(String title, PostCategory category, String content){
-        Post post = Post.create(title, category, content);
+    public void createPost(PostCreateRequest request){
+        PostCategory category = PostCategory.from(request.category());
+        Post post = Post.create(request.title(), category, request.content());
         postRepository.save(post);
     }
 
@@ -38,9 +41,9 @@ public class PostService {
         return PostResponse.from(findPostById(id));
     }
 
-    public void updatePost(Long id, String newTitle, String newContent){
+    public void updatePost(Long id, PostUpdateRequest request){
         Post post = findPostById(id);
-        post.update(newTitle, newContent);
+        post.update(request.title(), request.content());
     }
 
     public void deletePost(Long id) {

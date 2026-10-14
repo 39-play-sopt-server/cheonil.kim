@@ -1,11 +1,12 @@
 package org.sopt.controller;
 
-import org.sopt.code.PostErrorCode;
+import jakarta.validation.Valid;
 import org.sopt.code.PostSuccessCode;
 import org.sopt.domain.PostCategory;
 import org.sopt.dto.ApiResponse;
-import org.sopt.dto.PostResponse;
-import org.sopt.exception.PostException;
+import org.sopt.dto.request.PostCreateRequest;
+import org.sopt.dto.request.PostUpdateRequest;
+import org.sopt.dto.response.PostResponse;
 import org.sopt.service.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +23,10 @@ public class PostController {
     }
 
     @PostMapping
-    //request dto 만들어서 매핑 어노테이션 추가 필요
-    public ResponseEntity<ApiResponse<Void>> createPost(String title, PostCategory category, String content){
-        postService.createPost(title, category, content);
+    public ResponseEntity<ApiResponse<Void>> createPost(
+            @Valid @RequestBody PostCreateRequest request
+            ){
+        postService.createPost(request);
         return ResponseEntity
                 .status(PostSuccessCode.POST_CREATED.getHttpStatus())
                 .body(ApiResponse.success(PostSuccessCode.POST_CREATED));
@@ -50,9 +52,11 @@ public class PostController {
     }
 
     @PutMapping(path="/{postId}")
-    public ResponseEntity<ApiResponse<Void>> updatePost(Long id, String newTitle, String newContent
-    ){
-        postService.updatePost(id, newTitle, newContent);
+    public ResponseEntity<ApiResponse<Void>> updatePost(
+            @PathVariable(name="postId") Long id,
+            @Valid @RequestBody PostUpdateRequest request
+            ){
+        postService.updatePost(id, request);
         return ResponseEntity
                 .status(PostSuccessCode.POST_UPDATED.getHttpStatus())
                 .body(ApiResponse.success(PostSuccessCode.POST_UPDATED));

@@ -1,5 +1,8 @@
 package org.sopt.domain;
 
+import org.sopt.code.PostErrorCode;
+import org.sopt.exception.InvalidPostException;
+
 import java.time.LocalDate;
 
 public class Post {
@@ -17,6 +20,7 @@ public class Post {
     }
 
     public static Post create(String title, PostCategory category, String content){
+        validate(title, content);
         return new Post(title, category, content);
     }
 
@@ -48,7 +52,13 @@ public class Post {
     }
 
     public void update(String title, String content){
+        validate(title, content);
         this.title=title;
         this.content=content;
+    }
+
+    private static void validate(String title, String content){
+        if(title==null || title.isBlank()) throw new InvalidPostException(PostErrorCode.BLANK_INPUT);
+        if(content==null || content.isBlank()) throw new InvalidPostException(PostErrorCode.BLANK_INPUT);
     }
 }

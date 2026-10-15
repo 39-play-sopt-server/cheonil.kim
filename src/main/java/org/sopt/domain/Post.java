@@ -4,6 +4,7 @@ import org.sopt.code.PostErrorCode;
 import org.sopt.exception.InvalidPostException;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Post {
     private Long id;
@@ -11,14 +12,13 @@ public class Post {
     private final PostCategory category;
     private String content;
     private final LocalDate writtenDate;
-    private int viewCount;
+    private final AtomicInteger viewCount = new AtomicInteger(0);
 
     private Post(String title, PostCategory category, String content) {
         this.title = title;
         this.category=category;
         this.content = content;
         this.writtenDate=LocalDate.now();
-        this.viewCount=0;
     }
 
     public static Post create(String title, PostCategory category, String content){
@@ -34,7 +34,7 @@ public class Post {
     }
 
     public void increaseViewCount(){
-        this.viewCount++;
+        viewCount.incrementAndGet();
     }
 
     public Long getId(){
@@ -57,7 +57,7 @@ public class Post {
         return this.writtenDate;
     }
 
-    public int getViewCount() { return this.viewCount; }
+    public int getViewCount() { return viewCount.get(); }
 
     public void update(String title, String content){
         validate(title, content);

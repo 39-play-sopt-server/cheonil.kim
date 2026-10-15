@@ -1,8 +1,10 @@
 package org.sopt.repository;
 
 import org.sopt.domain.Post;
+import org.sopt.domain.PostCategory;
 import org.springframework.stereotype.Repository;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Repository
 public class InMemoryPostRepository implements PostRepository{
@@ -17,8 +19,21 @@ public class InMemoryPostRepository implements PostRepository{
     }
 
     @Override
-    public List<Post> getPostList(){
-        return List.copyOf(posts.values());
+    public List<Post> getPostList(PostCategory category, int page, int size){
+        return filtered(category)
+                .skip((long)(page-1)*size)
+                .limit(size)
+                .toList();
+    }
+
+    @Override
+    public long count(PostCategory category){
+        return filtered(category).count();
+    }
+
+    private Stream<Post> filtered(PostCategory category){
+        return posts.values().stream()
+                .filter(p -> category == null || p.getCategory() == category);
     }
 
     @Override

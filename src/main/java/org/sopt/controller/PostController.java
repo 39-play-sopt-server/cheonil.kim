@@ -6,6 +6,7 @@ import org.sopt.domain.PostCategory;
 import org.sopt.dto.ApiResponse;
 import org.sopt.dto.request.PostCreateRequest;
 import org.sopt.dto.request.PostUpdateRequest;
+import org.sopt.dto.response.PostListResponse;
 import org.sopt.dto.response.PostResponse;
 import org.sopt.service.PostService;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +34,14 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PostResponse>>> getPostList(
-            @RequestParam(name = "page", defaultValue = "1") Long page
+    public ResponseEntity<ApiResponse<PostListResponse>> getPostList(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "category", required = false) String category
     ){
         return ResponseEntity
                 .status(PostSuccessCode.POST_READ.getHttpStatus())
-                .body(ApiResponse.success(PostSuccessCode.POST_READ, postService.getPostList()));
+                .body(ApiResponse.success(PostSuccessCode.POST_READ, postService.getPostList(page, size, category)));
     }
 
     @GetMapping(path="/{postId}")

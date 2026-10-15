@@ -11,12 +11,14 @@ public class Post {
     private final PostCategory category;
     private String content;
     private final LocalDate writtenDate;
+    private int viewCount;
 
     private Post(String title, PostCategory category, String content) {
         this.title = title;
         this.category=category;
         this.content = content;
         this.writtenDate=LocalDate.now();
+        this.viewCount=0;
     }
 
     public static Post create(String title, PostCategory category, String content){
@@ -29,6 +31,10 @@ public class Post {
             throw new IllegalStateException("이미 id가 부여된 게시글입니다.");
         }
         this.id=id;
+    }
+
+    public void increaseViewCount(){
+        this.viewCount++;
     }
 
     public Long getId(){
@@ -50,6 +56,8 @@ public class Post {
     public LocalDate getWrittenDate(){
         return this.writtenDate;
     }
+
+    public int getViewCount() { return this.viewCount; }
 
     public void update(String title, String content){
         validate(title, content);

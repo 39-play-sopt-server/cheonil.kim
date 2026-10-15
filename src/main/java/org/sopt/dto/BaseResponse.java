@@ -3,17 +3,17 @@ package org.sopt.dto;
 import org.sopt.code.ErrorCode;
 import org.sopt.code.SuccessCode;
 
-public record ApiResponse<T>(int code, T data, String message) {
+public record BaseResponse<T>(int code, T data, String message) {
 
-    public static <T> ApiResponse<T> success(SuccessCode code, T data){
-        return new ApiResponse<>(code.getCode(), data, code.getMessage());
+    public static <T> BaseResponse<T> success(SuccessCode code, T data){
+        return new BaseResponse<>(code.getCode(), data, code.getMessage());
     }
 
-    public static <T> ApiResponse<Void> success(SuccessCode code){
-        return new ApiResponse<>(code.getCode(), null, code.getMessage());
+    public static BaseResponse<Void> success(SuccessCode code){
+        return new BaseResponse<>(code.getCode(), null, code.getMessage());
     }
 
-    public static <T> ApiResponse<Void> fail(ErrorCode code){
-        return new ApiResponse<>(code.getCode(), null, code.getMessage());
+    public static BaseResponse<Void> fail(ErrorCode code){
+        return new BaseResponse<>(code.getCode(), null, code.getMessage());
     }
 }

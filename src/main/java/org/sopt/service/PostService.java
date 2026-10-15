@@ -52,8 +52,8 @@ public class PostService {
     //외부로 내보낼때 사용, DTO로 반환
     public PostResponse getPost(Long id){
         Post post = findPostById(id);
-        post.increaseViewCount();;
-        return PostResponse.from(findPostById(id));
+        post.increaseViewCount();
+        return PostResponse.from(post);
     }
 
     public void updatePost(Long id, PostUpdateRequest request){

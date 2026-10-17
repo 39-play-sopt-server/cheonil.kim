@@ -1,74 +1,80 @@
 package org.sopt.controller;
 
+import jakarta.validation.Valid;
 import org.sopt.code.PostSuccessCode;
-import org.sopt.domain.PostCategory;
-import org.sopt.dto.ApiResponse;
-import org.sopt.dto.PostResponse;
-import org.sopt.exception.PostException;
+import org.sopt.controller.docs.PostControllerDocs;
+import org.sopt.dto.BaseResponse;
+import org.sopt.dto.request.PostCreateRequest;
+import org.sopt.dto.request.PostUpdateRequest;
+import org.sopt.dto.response.PostListResponse;
+import org.sopt.dto.response.PostResponse;
 import org.sopt.service.PostService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path="/api/v1/posts")
-public class PostController {
+public class PostController implements PostControllerDocs {
     private final PostService postService;
 
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
+    @Override
     @PostMapping
-    //request dto 만들어서 매핑 어노테이션 추가 필요
-    public ApiResponse<Void> createPost(String title, PostCategory category, String content){
-        try {
-            postService.createPost(title, category, content);
-            return ApiResponse.success(PostSuccessCode.POST_CREATED);
-        } catch (PostException e) {
-            return ApiResponse.fail(e.getErrorCode());
-        }
-    }
-
-    @GetMapping
-    public ApiResponse<List<PostResponse>> getPostList(
-            @RequestParam(name = "page", defaultValue = "1") Long page
+    public ResponseEntity<BaseResponse<Void>> createPost(
+            @Valid @RequestBody PostCreateRequest request
     ){
-        try {
-            return ApiResponse.success(PostSuccessCode.POST_READ, postService.getPostList());
-        } catch (PostException e) {
-            return ApiResponse.fail(e.getErrorCode());
-        }
+        postService.createPost(request);
+        return ResponseEntity
+                .status(PostSuccessCode.POST_CREATED.getHttpStatus())
+                .body(BaseResponse.success(PostSuccessCode.POST_CREATED));
     }
 
+    @Override
+    @GetMapping
+    public ResponseEntity<BaseResponse<PostListResponse>> getPostList(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "category", required = false) String category
+    ){
+        return ResponseEntity
+                .status(PostSuccessCode.POST_READ.getHttpStatus())
+                .body(BaseResponse.success(PostSuccessCode.POST_READ, postService.getPostList(page, size, category)));
+    }
+
+    @Override
     @GetMapping(path="/{postId}")
-    public ApiResponse<PostResponse> getPost(
-            @PathVariable(name = "postId") Long id){
-        try {
-            return ApiResponse.success(PostSuccessCode.POST_READ, postService.getPost(id));
-        } catch (PostException e) {
-            return ApiResponse.fail(e.getErrorCode());
-        }
+    public ResponseEntity<BaseResponse<PostResponse>> getPost(
+            @PathVariable(name = "postId") Long id
+    ){
+        return ResponseEntity
+                .status(PostSuccessCode.POST_READ.getHttpStatus())
+                .body(BaseResponse.success(PostSuccessCode.POST_READ, postService.getPost(id)));
+
     }
 
+    @Override
     @PutMapping(path="/{postId}")
-    public ApiResponse<Void> updatePost(Long id, String newTitle, String newContent){
-        try {
-            postService.updatePost(id, newTitle, newContent);
-            return ApiResponse.success(PostSuccessCode.POST_UPDATED);
-        } catch (PostException e) {
-            return ApiResponse.fail(e.getErrorCode());
-        }
+    public ResponseEntity<BaseResponse<Void>> updatePost(
+            @PathVariable(name="postId") Long id,
+            @Valid @RequestBody PostUpdateRequest request
+    ){
+        postService.updatePost(id, request);
+        return ResponseEntity
+                .status(PostSuccessCode.POST_UPDATED.getHttpStatus())
+                .body(BaseResponse.success(PostSuccessCode.POST_UPDATED));
     }
 
+    @Override
     @DeleteMapping(path="/{postId}")
-    public ApiResponse<Void> deletePost(
-            @PathVariable(name="postId") Long id){
-        try {
-            postService.deletePost(id);
-            return ApiResponse.success(PostSuccessCode.POST_DELETED);
-        } catch (PostException e) {
-            return ApiResponse.fail(e.getErrorCode());
-        }
+    public ResponseEntity<BaseResponse<Void>> deletePost(
+            @PathVariable(name="postId") Long id
+    ){
+        postService.deletePost(id);
+        return ResponseEntity
+                .status(PostSuccessCode.POST_DELETED.getHttpStatus())
+                .body(BaseResponse.success(PostSuccessCode.POST_DELETED));
     }
 }

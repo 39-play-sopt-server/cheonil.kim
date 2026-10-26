@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    default: local
+  application:
+    name: assignment
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/assignment}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true

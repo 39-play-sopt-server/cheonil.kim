@@ -2,14 +2,10 @@ package org.sopt.repository;
 
 import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface PostRepository {
-    Post save(Post post);
-    List<Post> getPostList(PostCategory category, int page, int size);
-    long count(PostCategory category);
-    Optional<Post> getPost(Long id);
-    void deletePost(Long id);
+public interface PostRepository extends JpaRepository<Post, Long> {
+    Page<Post> findByCategory(PostCategory category, Pageable pageable);
 }

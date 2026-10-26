@@ -1,18 +1,25 @@
 package org.sopt.domain;
 
+import jakarta.persistence.*;
 import org.sopt.code.PostErrorCode;
 import org.sopt.exception.InvalidPostException;
-
 import java.time.LocalDate;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@Entity
 public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
-    private final PostCategory category;
+
+    @Enumerated(EnumType.STRING)
+    private PostCategory category;
     private String content;
-    private final LocalDate writtenDate;
-    private final AtomicInteger viewCount = new AtomicInteger(0);
+    private LocalDate writtenDate;
+    private int viewCount = 0;
+
+    protected Post() {}
 
     private Post(String title, PostCategory category, String content) {
         this.title = title;
@@ -26,15 +33,8 @@ public class Post {
         return new Post(title, category, content);
     }
 
-    public void assignId(Long id){
-        if(this.id != null){
-            throw new IllegalStateException("이미 id가 부여된 게시글입니다.");
-        }
-        this.id=id;
-    }
-
     public void increaseViewCount(){
-        viewCount.incrementAndGet();
+        this.viewCount++;
     }
 
     public Long getId(){
@@ -57,7 +57,7 @@ public class Post {
         return this.writtenDate;
     }
 
-    public int getViewCount() { return viewCount.get(); }
+    public int getViewCount() { return viewCount; }
 
     public void update(String title, String content){
         validate(title, content);

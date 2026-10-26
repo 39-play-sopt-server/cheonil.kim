@@ -10,7 +10,12 @@ import org.sopt.dto.response.PostResponse;
 import org.sopt.exception.InvalidPostException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -32,30 +37,34 @@ public class PostService {
             throw new InvalidPostException(PostErrorCode.INVALID_PAGE);
         }
         PostCategory postCategory = (category==null) ? null : PostCategory.from(category);
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by("id"));
 
-        List<PostResponse> posts = postRepository.getPostList(postCategory, page, size).stream()
+        Page<Post> result = (postCategory==null)
+                ? postRepository.findAll(pageable)
+                : postRepository.findByCategory(postCategory, pageable);
+
+        List<PostResponse> posts = result.getContent().stream()
                 .map(PostResponse::from)
                 .toList();
 
-        long total = postRepository.count(postCategory);
-        int totalPage = (int) Math.ceil((double)total/size);
-
-        return new PostListResponse(posts, page, size, total, totalPage);
+        return new PostListResponse(posts, page, size, result.getTotalElements(), result.getTotalPages());
     }
 
     //service 내부에서만 사용, post 엔티티를 그대로 반환
     private Post findPostById(Long id){
-        return postRepository.getPost(id)
+        return postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
     }
 
     //외부로 내보낼때 사용, DTO로 반환
+    @Transactional
     public PostResponse getPost(Long id){
         Post post = findPostById(id);
         post.increaseViewCount();
         return PostResponse.from(post);
     }
 
+    @Transactional
     public void updatePost(Long id, PostUpdateRequest request){
         Post post = findPostById(id);
         post.update(request.title(), request.content());
@@ -63,6 +72,6 @@ public class PostService {
 
     public void deletePost(Long id) {
         findPostById(id); //게시글이 존재하는지 확인용
-        postRepository.deletePost(id);
+        postRepository.deleteById(id);
     }
 }

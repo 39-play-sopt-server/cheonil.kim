@@ -80,4 +80,28 @@ public class PostController implements PostControllerDocs {
                 .status(PostSuccessCode.POST_DELETED.getHttpStatus())
                 .body(BaseResponse.success(PostSuccessCode.POST_DELETED));
     }
+
+    @Override
+    @PostMapping(path = "/{postId}/likes")
+    public ResponseEntity<BaseResponse<Void>> likePost(
+            @PathVariable(name = "postId") Long postId,
+            @RequestParam(name = "memberId") Long memberId
+    ){
+        postService.likePost(postId, memberId);
+        return ResponseEntity
+                .status(PostSuccessCode.POST_LIKED.getHttpStatus())
+                .body(BaseResponse.success(PostSuccessCode.POST_LIKED));
+    }
+
+    @Override
+    @DeleteMapping(path = "/{postId}/likes")
+    public ResponseEntity<BaseResponse<Void>> unlikePost(
+            @PathVariable(name = "postId") Long postId,
+            @RequestParam(name = "memberId") Long memberId
+    ){
+        postService.unlikePost(postId, memberId);
+        return ResponseEntity
+                .status(PostSuccessCode.POST_UNLIKED.getHttpStatus())
+                .body(BaseResponse.success(PostSuccessCode.POST_UNLIKED));
+    }
 }

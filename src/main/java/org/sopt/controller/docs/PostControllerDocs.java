@@ -67,4 +67,25 @@ public interface PostControllerDocs {
             @Parameter(description = "게시글 ID", example = "1") Long id
     );
 
+    @Operation(summary = "좋아요", description = "게시글에 좋아요를 누릅니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "좋아요를 눌렀습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글 또는 회원"),
+            @ApiResponse(responseCode = "409", description = "이미 좋아요한 게시글입니다.")
+    })
+    ResponseEntity<BaseResponse<Void>> likePost(
+            @Parameter(description = "게시글 ID", example = "1") Long postId,
+            @Parameter(description = "회원 ID", example = "1") Long memberId
+    );
+
+    @Operation(summary = "좋아요 취소", description = "게시글의 좋아요를 취소합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "좋아요를 취소했습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글"),
+            @ApiResponse(responseCode = "409", description = "좋아요하지 않은 게시글입니다.")
+    })
+    ResponseEntity<BaseResponse<Void>> unlikePost(
+            @Parameter(description = "게시글 ID", example = "1") Long postId,
+            @Parameter(description = "회원 ID", example = "1") Long memberId
+    );
 }

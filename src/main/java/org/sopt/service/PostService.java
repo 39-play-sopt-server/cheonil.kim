@@ -4,6 +4,7 @@ import org.sopt.code.PostErrorCode;
 import org.sopt.domain.Member;
 import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
+import org.sopt.domain.PostLike;
 import org.sopt.dto.request.PostCreateRequest;
 import org.sopt.dto.request.PostUpdateRequest;
 import org.sopt.dto.response.PostListResponse;
@@ -12,6 +13,7 @@ import org.sopt.exception.InvalidPostException;
 import org.sopt.exception.MemberNotFoundException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.MemberRepository;
+import org.sopt.repository.PostLikeRepository;
 import org.sopt.repository.PostRepository;
 import org.sopt.repository.PostSearchCondition;
 import org.springframework.data.domain.Page;
@@ -27,10 +29,14 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final PostLikeRepository postLikeRepository;
 
-    public PostService(PostRepository postRepository, MemberRepository memberRepository) {
+    public PostService(PostRepository postRepository,
+                       MemberRepository memberRepository,
+                       PostLikeRepository postLikeRepository) {
         this.postRepository = postRepository;
         this.memberRepository = memberRepository;
+        this.postLikeRepository = postLikeRepository;
     }
 
     @Transactional
@@ -83,5 +89,31 @@ public class PostService {
     public void deletePost(Long id) {
         findPostById(id); //게시글이 존재하는지 확인용
         postRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void likePost(Long postId, Long memberId){
+        Post post = findPostById(postId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        if(postLikeRepository.existsByMemberIdAndPostId(memberId, postId)){
+            throw new InvalidPostException(PostErrorCode.ALREADY_LIKED);
+        }
+
+        postLikeRepository.save(PostLike.create(member, post));
+        postRepository.increaseLikeCount(postId);
+    }
+
+    @Transactional
+    public void unlikePost(Long postId, Long memberId){
+        findPostById(postId);
+
+        if(!postLikeRepository.existsByMemberIdAndPostId(memberId, postId)){
+            throw new InvalidPostException(PostErrorCode.NOT_LIKED);
+        }
+
+        postLikeRepository.deleteByMemberIdAndPostId(memberId, postId);
+        postRepository.decreaseLikeCount(postId);
     }
 }

@@ -5,7 +5,10 @@ import org.sopt.code.PostErrorCode;
 import org.sopt.exception.InvalidPostException;
 
 @Entity
-@Table(name = "post")
+@Table(name = "post", indexes = {
+        @Index(name = "idx_post_title", columnList = "title"),
+        @Index(name = "idx_post_created_at", columnList = "created_at")
+})
 public class Post extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -30,6 +30,7 @@ public class Post {
 
     public static Post create(String title, PostCategory category, String content){
         validate(title, content);
+        if(category==null) throw new InvalidPostException(PostErrorCode.INVALID_CATEGORY);
         return new Post(title, category, content);
     }
 

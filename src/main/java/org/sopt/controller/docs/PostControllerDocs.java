@@ -17,7 +17,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 생성", description = "제목, 카테고리, 내용을 입력받아 게시글을 생성합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "게시글 생성 성공"),
+            @ApiResponse(responseCode = "201", description = "게시글이 작성되었습니다."),
             @ApiResponse(responseCode = "400", description = "비어있거나 부적절한 입력")
     })
     ResponseEntity<BaseResponse<Void>> createPost(
@@ -26,7 +26,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 상세 조회", description = "게시글 id로 단건 조회합니다. 호출 시 조회수가 1 증가합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회에 성공했습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
     ResponseEntity<BaseResponse<PostResponse>> getPost(
@@ -35,7 +35,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 조회합니다. 특정 카테고리만 불러올 수도 있습니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회에 성공했습니다."),
             @ApiResponse(responseCode = "400", description = "부적절한 페이지 파라미터")
     })
     ResponseEntity<BaseResponse<PostListResponse>> getPostList(
@@ -46,7 +46,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 수정", description = "특정 게시글의 제목과 내용을 수정합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시글 수정 성공"),
+            @ApiResponse(responseCode = "200", description = "게시글이 수정되었습니다."),
             @ApiResponse(responseCode = "400", description = "비어있거나 부적절한 입력"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
@@ -57,7 +57,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 삭제", description = "특정 게시글을 삭제합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
+            @ApiResponse(responseCode = "200", description = "게시글이 삭제되었습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
     ResponseEntity<BaseResponse<Void>> deletePost(

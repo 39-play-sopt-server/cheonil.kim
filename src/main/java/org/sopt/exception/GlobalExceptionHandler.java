@@ -5,6 +5,7 @@ import org.sopt.code.GlobalErrorCode;
 import org.sopt.dto.BaseResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,8 +29,19 @@ public class GlobalExceptionHandler {
                 .body(BaseResponse.fail(GlobalErrorCode.INTERNAL_SERVER_ERROR));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseResponse<Void>> handleValidation(MethodArgumentNotValidException e){
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .findFirst()
+                .orElse(GlobalErrorCode.INVALID_INPUT_VALUE.getMessage());
+
+        return ResponseEntity
+                .status(GlobalErrorCode.INVALID_INPUT_VALUE.getHttpStatus())
+                .body(BaseResponse.fail(GlobalErrorCode.INVALID_INPUT_VALUE, message));
+    }
+
     @ExceptionHandler({
-            MethodArgumentNotValidException.class,      // @Valid 실패
             MethodArgumentTypeMismatchException.class,
             HttpMessageNotReadableException.class       // 깨진 JSON 본문
     })

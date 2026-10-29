@@ -3,7 +3,6 @@ package org.sopt.domain;
 import jakarta.persistence.*;
 import org.sopt.code.PostErrorCode;
 import org.sopt.exception.InvalidPostException;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "post")

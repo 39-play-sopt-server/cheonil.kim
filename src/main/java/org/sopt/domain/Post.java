@@ -6,32 +6,47 @@ import org.sopt.exception.InvalidPostException;
 import java.time.LocalDate;
 
 @Entity
-public class Post {
+@Table(name = "post")
+public class Post extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id", nullable = false)
     private Long id;
 
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
     private PostCategory category;
+
+    @Column(name = "content", nullable = false)
     private String content;
-    private LocalDate writtenDate;
+
+    @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
+
+    @Column(name = "like_count", nullable = false)
+    private int likeCount = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     protected Post() {}
 
-    private Post(String title, PostCategory category, String content) {
+    private Post(String title, PostCategory category, String content, Member member) {
         this.title = title;
         this.category=category;
         this.content = content;
-        this.writtenDate=LocalDate.now();
+        this.member = member;
     }
 
-    public static Post create(String title, PostCategory category, String content){
+    public static Post create(String title, PostCategory category, String content, Member member){
         validate(title, content);
         if(category==null) throw new InvalidPostException(PostErrorCode.INVALID_CATEGORY);
-        return new Post(title, category, content);
+        if(member==null) throw new InvalidPostException(PostErrorCode.WRITER_REQUIRED);
+        return new Post(title, category, content, member);
     }
 
     public void increaseViewCount(){
@@ -54,11 +69,11 @@ public class Post {
         return this.category;
     }
 
-    public LocalDate getWrittenDate(){
-        return this.writtenDate;
-    }
+    public int getViewCount() { return this.viewCount; }
 
-    public int getViewCount() { return viewCount; }
+    public int getLikeCount() { return this.likeCount; }
+
+    public Member getMember() { return this.member; }
 
     public void update(String title, String content){
         validate(title, content);

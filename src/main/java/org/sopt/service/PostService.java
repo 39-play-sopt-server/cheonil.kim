@@ -1,6 +1,7 @@
 package org.sopt.service;
 
 import org.sopt.code.PostErrorCode;
+import org.sopt.domain.Member;
 import org.sopt.domain.Post;
 import org.sopt.domain.PostCategory;
 import org.sopt.dto.request.PostCreateRequest;
@@ -8,7 +9,9 @@ import org.sopt.dto.request.PostUpdateRequest;
 import org.sopt.dto.response.PostListResponse;
 import org.sopt.dto.response.PostResponse;
 import org.sopt.exception.InvalidPostException;
+import org.sopt.exception.MemberNotFoundException;
 import org.sopt.exception.PostNotFoundException;
+import org.sopt.repository.MemberRepository;
 import org.sopt.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,16 +22,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
-    public PostService(PostRepository repository) {
-        this.postRepository = repository;
+    public PostService(PostRepository postRepository, MemberRepository memberRepository) {
+        this.postRepository = postRepository;
+        this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public void createPost(PostCreateRequest request){
+        Member member = memberRepository.findById(request.memberId())
+                .orElseThrow(MemberNotFoundException::new);
         PostCategory category = PostCategory.from(request.category());
-        Post post = Post.create(request.title(), category, request.content());
+        Post post = Post.create(request.title(), category, request.content(), member);
         postRepository.save(post);
     }
 
@@ -37,7 +46,8 @@ public class PostService {
             throw new InvalidPostException(PostErrorCode.INVALID_PAGE);
         }
         PostCategory postCategory = (category==null) ? null : PostCategory.from(category);
-        Pageable pageable = PageRequest.of(page-1, size, Sort.by("id"));
+        Pageable pageable = PageRequest.of(page-1, size,
+                Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id")));
 
         Page<Post> result = (postCategory==null)
                 ? postRepository.findAll(pageable)
@@ -70,6 +80,7 @@ public class PostService {
         post.update(request.title(), request.content());
     }
 
+    @Transactional
     public void deletePost(Long id) {
         findPostById(id); //게시글이 존재하는지 확인용
         postRepository.deleteById(id);

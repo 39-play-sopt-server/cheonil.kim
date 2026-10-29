@@ -37,11 +37,14 @@ public class PostController implements PostControllerDocs {
     public ResponseEntity<BaseResponse<PostListResponse>> getPostList(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "category", required = false) String category
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "memberId", required = false) Long memberId
     ){
         return ResponseEntity
                 .status(PostSuccessCode.POST_READ.getHttpStatus())
-                .body(BaseResponse.success(PostSuccessCode.POST_READ, postService.getPostList(page, size, category)));
+                .body(BaseResponse.success(PostSuccessCode.POST_READ,
+                        postService.getPostList(page, size, category, title, memberId)));
     }
 
     @Override

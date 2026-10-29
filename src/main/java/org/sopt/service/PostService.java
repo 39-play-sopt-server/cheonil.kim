@@ -13,6 +13,7 @@ import org.sopt.exception.MemberNotFoundException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.MemberRepository;
 import org.sopt.repository.PostRepository;
+import org.sopt.repository.PostSearchCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,17 +42,15 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public PostListResponse getPostList(int page, int size, String category){
+    public PostListResponse getPostList(int page, int size, String category, String title, Long memberId){
         if(page<1 || size<1 || size>100){
             throw new InvalidPostException(PostErrorCode.INVALID_PAGE);
         }
         PostCategory postCategory = (category==null) ? null : PostCategory.from(category);
-        Pageable pageable = PageRequest.of(page-1, size,
-                Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id")));
+        Pageable pageable = PageRequest.of(page-1, size);
 
-        Page<Post> result = (postCategory==null)
-                ? postRepository.findAll(pageable)
-                : postRepository.findByCategory(postCategory, pageable);
+        PostSearchCondition condition = new PostSearchCondition(title, postCategory, memberId);
+        Page<Post> result = postRepository.search(condition, pageable);
 
         List<PostResponse> posts = result.getContent().stream()
                 .map(PostResponse::from)

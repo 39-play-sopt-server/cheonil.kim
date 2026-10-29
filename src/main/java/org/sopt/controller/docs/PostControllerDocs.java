@@ -33,7 +33,8 @@ public interface PostControllerDocs {
             @Parameter(description = "게시글 ID", example = "1") Long id
     );
 
-    @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 조회합니다. 특정 카테고리만 불러올 수도 있습니다.")
+    @Operation(summary = "게시글 목록 조회",
+            description = "게시글 목록을 최신순으로 조회합니다. 제목(앞부분 일치), 카테고리, 작성자 ID로 필터링할 수 있으며 조건은 자유롭게 조합됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회에 성공했습니다."),
             @ApiResponse(responseCode = "400", description = "부적절한 페이지 파라미터")
@@ -41,7 +42,9 @@ public interface PostControllerDocs {
     ResponseEntity<BaseResponse<PostListResponse>> getPostList(
             @Parameter(description = "페이지 번호", example = "1") int page,
             @Parameter(description = "페이지 크기", example = "10") int size,
-            @Parameter(description = "카테고리 종류", example = "REVIEW") String category
+            @Parameter(description = "카테고리 종류", example = "REVIEW") String category,
+            @Parameter(description = "제목 검색어 (앞부분 일치)", example = "첫") String title,
+            @Parameter(description = "작성자 ID", example = "1") Long memberId
     );
 
     @Operation(summary = "게시글 수정", description = "특정 게시글의 제목과 내용을 수정합니다.")

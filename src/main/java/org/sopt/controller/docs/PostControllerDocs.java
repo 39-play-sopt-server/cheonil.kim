@@ -17,7 +17,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 생성", description = "제목, 카테고리, 내용을 입력받아 게시글을 생성합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "게시글 생성 성공"),
+            @ApiResponse(responseCode = "201", description = "게시글이 작성되었습니다."),
             @ApiResponse(responseCode = "400", description = "비어있거나 부적절한 입력")
     })
     ResponseEntity<BaseResponse<Void>> createPost(
@@ -26,27 +26,30 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 상세 조회", description = "게시글 id로 단건 조회합니다. 호출 시 조회수가 1 증가합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회에 성공했습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
     ResponseEntity<BaseResponse<PostResponse>> getPost(
             @Parameter(description = "게시글 ID", example = "1") Long id
     );
 
-    @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 조회합니다. 특정 카테고리만 불러올 수도 있습니다.")
+    @Operation(summary = "게시글 목록 조회",
+            description = "게시글 목록을 최신순으로 조회합니다. 제목(앞부분 일치), 카테고리, 작성자 ID로 필터링할 수 있으며 조건은 자유롭게 조합됩니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회에 성공했습니다."),
             @ApiResponse(responseCode = "400", description = "부적절한 페이지 파라미터")
     })
     ResponseEntity<BaseResponse<PostListResponse>> getPostList(
             @Parameter(description = "페이지 번호", example = "1") int page,
             @Parameter(description = "페이지 크기", example = "10") int size,
-            @Parameter(description = "카테고리 종류", example = "REVIEW") String category
+            @Parameter(description = "카테고리 종류", example = "REVIEW") String category,
+            @Parameter(description = "제목 검색어 (앞부분 일치)", example = "첫") String title,
+            @Parameter(description = "작성자 ID", example = "1") Long memberId
     );
 
     @Operation(summary = "게시글 수정", description = "특정 게시글의 제목과 내용을 수정합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시글 수정 성공"),
+            @ApiResponse(responseCode = "200", description = "게시글이 수정되었습니다."),
             @ApiResponse(responseCode = "400", description = "비어있거나 부적절한 입력"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
@@ -57,11 +60,32 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 삭제", description = "특정 게시글을 삭제합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
+            @ApiResponse(responseCode = "200", description = "게시글이 삭제되었습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
     ResponseEntity<BaseResponse<Void>> deletePost(
             @Parameter(description = "게시글 ID", example = "1") Long id
     );
 
+    @Operation(summary = "좋아요", description = "게시글에 좋아요를 누릅니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "좋아요를 눌렀습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글 또는 회원"),
+            @ApiResponse(responseCode = "409", description = "이미 좋아요한 게시글입니다.")
+    })
+    ResponseEntity<BaseResponse<Void>> likePost(
+            @Parameter(description = "게시글 ID", example = "1") Long postId,
+            @Parameter(description = "회원 ID", example = "1") Long memberId
+    );
+
+    @Operation(summary = "좋아요 취소", description = "게시글의 좋아요를 취소합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "좋아요를 취소했습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글"),
+            @ApiResponse(responseCode = "409", description = "좋아요하지 않은 게시글입니다.")
+    })
+    ResponseEntity<BaseResponse<Void>> unlikePost(
+            @Parameter(description = "게시글 ID", example = "1") Long postId,
+            @Parameter(description = "회원 ID", example = "1") Long memberId
+    );
 }

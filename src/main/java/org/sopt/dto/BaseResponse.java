@@ -16,4 +16,8 @@ public record BaseResponse<T>(int code, T data, String message) {
     public static BaseResponse<Void> fail(ErrorCode code){
         return new BaseResponse<>(code.getCode(), null, code.getMessage());
     }
+
+    public static BaseResponse<Void> fail(ErrorCode code, String message){
+        return new BaseResponse<>(code.getCode(), null, message);
+    }
 }

@@ -41,3 +41,11 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+bootJar {
+    archiveFileName = 'app.jar'
+}
+
+jar {
+    enabled = false
+}

@@ -19,3 +19,9 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
         default_batch_fetch_size: 100
+
+server:
+  forward-headers-strategy: framework   # Nginx의 X-Forwarded-Proto를 읽어 Swagger가 https URL을 생성
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}   # 쉼표로 여러 개 가능

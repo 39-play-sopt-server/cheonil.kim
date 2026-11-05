@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [main, feat/15/homework4]
+    branches: [main]
   workflow_dispatch:        # PR 머지 전에도 Actions 탭에서 수동 실행 가능 (스크린샷용)
 
 jobs:

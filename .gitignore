@@ -6,6 +6,7 @@ build/
 .kotlin
 .omc/
 application-local.yml
+.env
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

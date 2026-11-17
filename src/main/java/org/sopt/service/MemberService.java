@@ -23,7 +23,7 @@ public class MemberService {
         if(memberRepository.existsByEmail(request.email())){
             throw new DuplicateEmailException();
         }
-        Member member = Member.create(request.email(), request.name());
+        Member member = Member.create(request.email(), request.name(), request.password());
         return MemberResponse.from(memberRepository.save(member));
     }
 

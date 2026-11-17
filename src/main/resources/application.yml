@@ -20,6 +20,10 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
 
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: 1800000 # 30분 (ms)
+
 server:
   forward-headers-strategy: framework   # Nginx의 X-Forwarded-Proto를 읽어 Swagger가 https URL을 생성
 

@@ -16,6 +16,9 @@ public class Member extends BaseEntity{
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -24,13 +27,14 @@ public class Member extends BaseEntity{
 
     protected Member() {}
 
-    private Member(String email, String name){
+    private Member(String email, String name, String password){
         this.name=name;
         this.email=email;
+        this.password=password;
     }
 
-    public static Member create(String email, String name){
-        return new Member(email,name);
+    public static Member create(String email, String name, String password){
+        return new Member(email,name, password);
     }
 
     public Long getId() {return this.id;}
@@ -38,4 +42,6 @@ public class Member extends BaseEntity{
     public String getEmail() {return this.email;}
 
     public String getName() {return this.name;}
+
+    public String getPassword() {return this.password;}
 }

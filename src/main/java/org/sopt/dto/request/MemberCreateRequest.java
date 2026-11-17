@@ -12,6 +12,8 @@ public record MemberCreateRequest(
 
         @Schema(description = "이름", example = "김천일")
         @NotBlank(message = "이름은 비어있을 수 없습니다.")
-        String name
+        String name,
+
+        String password
 ) {
 }

@@ -1,6 +1,7 @@
 package org.sopt.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,10 @@ public class Member extends BaseEntity{
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
+    // 컬럼이 새로 추가될 때 기존 행에 채워질 값. 지정하지 않으면 MySQL이
+    // enum('ADMIN','USER')의 첫 값인 ADMIN을 채워 기존 회원이 모두 관리자가 됨
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'USER'")
     @Column(name = "role", nullable = false)
     private Role role = Role.USER;
 

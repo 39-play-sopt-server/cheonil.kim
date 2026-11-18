@@ -1,7 +1,8 @@
 package org.sopt.service;
 
 import org.sopt.domain.Member;
-import org.sopt.jwt.JwtProvider;
+import org.sopt.jwt.TokenIssuer;
+import org.sopt.jwt.TokenType;
 import org.sopt.repository.MemberRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,12 +13,12 @@ public class AuthService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+    private final TokenIssuer tokenIssuer;
 
-    public AuthService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
+    public AuthService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, TokenIssuer tokenIssuer) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtProvider = jwtProvider;
+        this.tokenIssuer = tokenIssuer;
     }
 
     @Transactional
@@ -39,6 +40,6 @@ public class AuthService {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
-        return jwtProvider.createAccessToken(member.getId());
+        return tokenIssuer.issue(member.getId(), member.getRole(), TokenType.ACCESS).value();
     }
 }

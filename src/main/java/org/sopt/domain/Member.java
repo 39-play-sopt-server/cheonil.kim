@@ -25,6 +25,10 @@ public class Member extends BaseEntity{
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role = Role.USER;
+
     protected Member() {}
 
     private Member(String email, String name, String password){
@@ -44,4 +48,6 @@ public class Member extends BaseEntity{
     public String getName() {return this.name;}
 
     public String getPassword() {return this.password;}
+
+    public Role getRole() {return this.role;}
 }

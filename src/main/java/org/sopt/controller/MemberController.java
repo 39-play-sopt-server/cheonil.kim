@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.sopt.code.MemberSuccessCode;
 import org.sopt.controller.docs.MemberControllerDocs;
 import org.sopt.dto.BaseResponse;
-import org.sopt.dto.request.MemberCreateRequest;
 import org.sopt.dto.response.MemberResponse;
 import org.sopt.service.MemberService;
 import org.springframework.http.ResponseEntity;
@@ -21,29 +20,10 @@ public class MemberController implements MemberControllerDocs {
     }
 
     @Override
-    @PostMapping
-    public ResponseEntity<BaseResponse<MemberResponse>> createMember(
-            @Valid @RequestBody MemberCreateRequest request
-    ){
-        return ResponseEntity
-                .status(MemberSuccessCode.MEMBER_CREATED.getHttpStatus())
-                .body(BaseResponse.success(MemberSuccessCode.MEMBER_CREATED,
-                        memberService.createMember(request)));
-    }
-
-    @Override
-    @DeleteMapping(path = "/{memberId}")
-    public ResponseEntity<BaseResponse<Void>> deleteMember(
-            @PathVariable(name = "memberId") Long id
-    ){
-        memberService.deleteMember(id);
-        return ResponseEntity
-                .status(MemberSuccessCode.MEMBER_DELETED.getHttpStatus())
-                .body(BaseResponse.success(MemberSuccessCode.MEMBER_DELETED));
-    }
-
     @GetMapping("/me")
-    public ResponseEntity<Long> me(@AuthenticationPrincipal Long memberId) {
-        return ResponseEntity.ok(memberId);
+    public ResponseEntity<BaseResponse<MemberResponse>> getMyInfo(@AuthenticationPrincipal Long memberId) {
+        return ResponseEntity
+                .status(MemberSuccessCode.MEMBER_READ.getHttpStatus())
+                .body(BaseResponse.success(MemberSuccessCode.MEMBER_READ, memberService.getMember(memberId)));
     }
 }

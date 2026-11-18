@@ -1,13 +1,14 @@
 package org.sopt.jwt;
 
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.sopt.jwt.JwtProvider;
+import org.sopt.code.AuthErrorCode;
+import org.sopt.exception.AuthException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,12 +17,15 @@ import java.util.List;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    public static final String AUTH_ERROR_ATTRIBUTE = "authError";
     private static final String BEARER_PREFIX = "Bearer ";
 
-    private final JwtProvider jwtProvider;
+    private final TokenParser tokenParser;
+    private final TokenBlacklist tokenBlacklist;
 
-    public JwtAuthenticationFilter(JwtProvider jwtProvider) {
-        this.jwtProvider = jwtProvider;
+    public JwtAuthenticationFilter(TokenParser tokenParser, TokenBlacklist tokenBlacklist) {
+        this.tokenParser = tokenParser;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
     @Override
@@ -32,14 +36,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null) {
             try {
-                Long memberId = jwtProvider.getMemberId(token);
-
-                // 인증 완료된 Authentication 생성 후 SecurityContext에 저장
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(memberId, null, List.of());
+                TokenClaims claims = tokenParser.parse(token);
+                if(claims.type() != TokenType.ACCESS){
+                    throw new AuthException(AuthErrorCode.INVALID_TOKEN_TYPE);
+                }
+                if (tokenBlacklist.contains(claims.tokenId())) {
+                    throw new AuthException(AuthErrorCode.REVOKED_TOKEN);
+                }
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        claims.memberId(),
+                        null,
+                        List.of(new SimpleGrantedAuthority(claims.role().authority()))
+                );
+                // 로그아웃, 탈퇴 시 현재 토큰의 jti와 만료 시각을 꺼낼 수 있도록 claim을 함께 보관
+                authentication.setDetails(claims);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (JwtException | IllegalArgumentException e) {
-                // 유효하지 않은 토큰이면 인증 정보를 저장하지 않음
+            } catch (AuthException e) {
+                request.setAttribute(AUTH_ERROR_ATTRIBUTE, e.getErrorCode());
             }
         }
 

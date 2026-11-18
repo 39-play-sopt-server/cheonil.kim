@@ -10,6 +10,7 @@ import org.sopt.dto.response.PostListResponse;
 import org.sopt.dto.response.PostResponse;
 import org.sopt.service.PostService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,9 +25,10 @@ public class PostController implements PostControllerDocs {
     @Override
     @PostMapping
     public ResponseEntity<BaseResponse<Void>> createPost(
+            @AuthenticationPrincipal Long memberId,
             @Valid @RequestBody PostCreateRequest request
     ){
-        postService.createPost(request);
+        postService.createPost(memberId, request);
         return ResponseEntity
                 .status(PostSuccessCode.POST_CREATED.getHttpStatus())
                 .body(BaseResponse.success(PostSuccessCode.POST_CREATED));
@@ -61,10 +63,11 @@ public class PostController implements PostControllerDocs {
     @Override
     @PutMapping(path="/{postId}")
     public ResponseEntity<BaseResponse<Void>> updatePost(
+            @AuthenticationPrincipal Long memberId,
             @PathVariable(name="postId") Long id,
             @Valid @RequestBody PostUpdateRequest request
     ){
-        postService.updatePost(id, request);
+        postService.updatePost(memberId, id, request);
         return ResponseEntity
                 .status(PostSuccessCode.POST_UPDATED.getHttpStatus())
                 .body(BaseResponse.success(PostSuccessCode.POST_UPDATED));
@@ -73,9 +76,10 @@ public class PostController implements PostControllerDocs {
     @Override
     @DeleteMapping(path="/{postId}")
     public ResponseEntity<BaseResponse<Void>> deletePost(
+            @AuthenticationPrincipal Long memberId,
             @PathVariable(name="postId") Long id
     ){
-        postService.deletePost(id);
+        postService.deletePost(memberId, id);
         return ResponseEntity
                 .status(PostSuccessCode.POST_DELETED.getHttpStatus())
                 .body(BaseResponse.success(PostSuccessCode.POST_DELETED));
@@ -85,7 +89,7 @@ public class PostController implements PostControllerDocs {
     @PostMapping(path = "/{postId}/likes")
     public ResponseEntity<BaseResponse<Void>> likePost(
             @PathVariable(name = "postId") Long postId,
-            @RequestParam(name = "memberId") Long memberId
+            @AuthenticationPrincipal Long memberId
     ){
         postService.likePost(postId, memberId);
         return ResponseEntity
@@ -97,7 +101,7 @@ public class PostController implements PostControllerDocs {
     @DeleteMapping(path = "/{postId}/likes")
     public ResponseEntity<BaseResponse<Void>> unlikePost(
             @PathVariable(name = "postId") Long postId,
-            @RequestParam(name = "memberId") Long memberId
+            @AuthenticationPrincipal Long memberId
     ){
         postService.unlikePost(postId, memberId);
         return ResponseEntity

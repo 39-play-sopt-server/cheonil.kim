@@ -22,7 +22,13 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  access-token-expiration: 1800000 # 30분 (ms)
+  access-token-expiration: 30m
+  refresh-token-expiration: 14d
+
+# 서버 시작 시 없으면 생성되는 관리자 계정. 비어 있으면 생성하지 않음
+admin:
+  email: ${ADMIN_EMAIL:}
+  password: ${ADMIN_PASSWORD:}
 
 server:
   forward-headers-strategy: framework   # Nginx의 X-Forwarded-Proto를 읽어 Swagger가 https URL을 생성

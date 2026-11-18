@@ -1,13 +1,13 @@
 package org.sopt.service;
 
-import org.sopt.domain.Member;
-import org.sopt.dto.request.MemberCreateRequest;
 import org.sopt.dto.response.MemberResponse;
-import org.sopt.exception.DuplicateEmailException;
 import org.sopt.exception.MemberNotFoundException;
 import org.sopt.repository.MemberRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -18,19 +18,15 @@ public class MemberService {
         this.memberRepository=memberRepository;
     }
 
-    @Transactional
-    public MemberResponse createMember(MemberCreateRequest request){
-        if(memberRepository.existsByEmail(request.email())){
-            throw new DuplicateEmailException();
-        }
-        Member member = Member.create(request.email(), request.name(), request.password());
-        return MemberResponse.from(memberRepository.save(member));
+    public MemberResponse getMember(Long memberId){
+        return memberRepository.findById(memberId)
+                .map(MemberResponse::from)
+                .orElseThrow(MemberNotFoundException::new);
     }
 
-    @Transactional
-    public void deleteMember(Long id){
-        Member member = memberRepository.findById(id)
-                .orElseThrow(MemberNotFoundException::new);
-        memberRepository.delete(member);
+    public List<MemberResponse> getAllMembers(){
+        return memberRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
+                .map(MemberResponse::from)
+                .toList();
     }
 }

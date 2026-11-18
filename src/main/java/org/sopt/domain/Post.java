@@ -87,4 +87,8 @@ public class Post extends BaseEntity{
         if(title==null || title.isBlank()) throw new InvalidPostException(PostErrorCode.BLANK_INPUT);
         if(content==null || content.isBlank()) throw new InvalidPostException(PostErrorCode.BLANK_INPUT);
     }
+
+    public boolean isWrittenBy(Long memberId){
+        return this.member.getId().equals(memberId);
+    }
 }

@@ -1,6 +1,7 @@
 package org.sopt.dto.response;
 
 import org.sopt.domain.Member;
+import org.sopt.domain.Role;
 
 import java.time.LocalDateTime;
 
@@ -8,6 +9,7 @@ public record MemberResponse(
         Long id,
         String email,
         String name,
+        Role role,
         LocalDateTime createdAt
 ) {
     public static MemberResponse from(Member member){
@@ -15,6 +17,7 @@ public record MemberResponse(
                 member.getId(),
                 member.getEmail(),
                 member.getName(),
+                member.getRole(),
                 member.getCreatedAt()
         );
     }

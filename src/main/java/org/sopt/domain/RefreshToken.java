@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 
+// 행 추가와 교체는 RefreshTokenRepository의 upsert, rotateIfMatches가 원자적으로 처리
 @Entity
 @Table(name = "refresh_token")
 public class RefreshToken {
@@ -22,21 +23,6 @@ public class RefreshToken {
     private Instant expiresAt;
 
     protected RefreshToken()  {}
-
-    private RefreshToken(Long memberId, String tokenId, Instant expiresAt){
-        this.memberId = memberId;
-        this.tokenId = tokenId;
-        this.expiresAt = expiresAt;
-    }
-
-    public static RefreshToken create(Long memberId, String tokenId, Instant expiresAt){
-        return new RefreshToken(memberId, tokenId, expiresAt);
-    }
-
-    public void rotate(String tokenId, Instant expiresAt){
-        this.tokenId = tokenId;
-        this.expiresAt = expiresAt;
-    }
 
     public boolean matches(String tokenId){
         return this.tokenId.equals(tokenId);

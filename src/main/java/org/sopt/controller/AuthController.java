@@ -2,6 +2,7 @@ package org.sopt.controller;
 
 import jakarta.validation.Valid;
 import org.sopt.code.AuthSuccessCode;
+import org.sopt.controller.docs.AuthControllerDocs;
 import org.sopt.dto.BaseResponse;
 import org.sopt.dto.request.LoginRequest;
 import org.sopt.dto.request.SignupRequest;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public class AuthController {
+public class AuthController implements AuthControllerDocs {
 
     private final AuthService authService;
     private final RefreshTokenCookieManager cookieManager;
@@ -28,6 +29,7 @@ public class AuthController {
         this.cookieManager = cookieManager;
     }
 
+    @Override
     @PostMapping("/signup")
     public ResponseEntity<BaseResponse<MemberResponse>> signup(@Valid @RequestBody SignupRequest request) {
         return ResponseEntity
@@ -35,11 +37,13 @@ public class AuthController {
                 .body(BaseResponse.success(AuthSuccessCode.SIGNUP_SUCCESS, authService.signup(request)));
     }
 
+    @Override
     @PostMapping("/login")
     public ResponseEntity<BaseResponse<TokenResponse>> login(@Valid @RequestBody LoginRequest request) {
         return withTokens(AuthSuccessCode.LOGIN_SUCCESS, authService.login(request));
     }
 
+    @Override
     @PostMapping("/reissue")
     public ResponseEntity<BaseResponse<TokenResponse>> reissue(
             @CookieValue(name = RefreshTokenCookieManager.COOKIE_NAME, required = false) String refreshToken
@@ -47,12 +51,14 @@ public class AuthController {
         return withTokens(AuthSuccessCode.REISSUE_SUCCESS, authService.reissue(refreshToken));
     }
 
+    @Override
     @PostMapping("/logout")
     public ResponseEntity<BaseResponse<Void>> logout(Authentication authentication) {
         authService.logout(memberIdOf(authentication), accessTokenOf(authentication));
         return withExpiredCookie(AuthSuccessCode.LOGOUT_SUCCESS);
     }
 
+    @Override
     @DeleteMapping("/withdraw")
     public ResponseEntity<BaseResponse<Void>> withdraw(Authentication authentication) {
         authService.withdraw(memberIdOf(authentication), accessTokenOf(authentication));

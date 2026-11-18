@@ -21,6 +21,7 @@ public interface PostControllerDocs {
             @ApiResponse(responseCode = "400", description = "비어있거나 부적절한 입력")
     })
     ResponseEntity<BaseResponse<Void>> createPost(
+            @Parameter(hidden = true) Long memberId,
             PostCreateRequest request
     );
 
@@ -51,9 +52,11 @@ public interface PostControllerDocs {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글이 수정되었습니다."),
             @ApiResponse(responseCode = "400", description = "비어있거나 부적절한 입력"),
+            @ApiResponse(responseCode = "403", description = "게시글 작성자만 수정, 삭제할 수 있습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
     ResponseEntity<BaseResponse<Void>> updatePost(
+            @Parameter(hidden = true) Long memberId,
             @Parameter(description = "게시글 ID", example = "1") Long id,
             PostUpdateRequest request
     );
@@ -61,9 +64,11 @@ public interface PostControllerDocs {
     @Operation(summary = "게시글 삭제", description = "특정 게시글을 삭제합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글이 삭제되었습니다."),
+            @ApiResponse(responseCode = "403", description = "게시글 작성자만 수정, 삭제할 수 있습니다."),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글")
     })
     ResponseEntity<BaseResponse<Void>> deletePost(
+            @Parameter(hidden = true) Long memberId,
             @Parameter(description = "게시글 ID", example = "1") Long id
     );
 
@@ -75,7 +80,7 @@ public interface PostControllerDocs {
     })
     ResponseEntity<BaseResponse<Void>> likePost(
             @Parameter(description = "게시글 ID", example = "1") Long postId,
-            @Parameter(description = "회원 ID", example = "1") Long memberId
+            @Parameter(hidden = true) Long memberId
     );
 
     @Operation(summary = "좋아요 취소", description = "게시글의 좋아요를 취소합니다.")
@@ -86,6 +91,6 @@ public interface PostControllerDocs {
     })
     ResponseEntity<BaseResponse<Void>> unlikePost(
             @Parameter(description = "게시글 ID", example = "1") Long postId,
-            @Parameter(description = "회원 ID", example = "1") Long memberId
+            @Parameter(hidden = true) Long memberId
     );
 }

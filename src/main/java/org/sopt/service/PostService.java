@@ -40,8 +40,8 @@ public class PostService {
     }
 
     @Transactional
-    public void createPost(PostCreateRequest request){
-        Member member = memberRepository.findById(request.memberId())
+    public void createPost(Long memberId, PostCreateRequest request){
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
         PostCategory category = PostCategory.from(request.category());
         Post post = Post.create(request.title(), category, request.content(), member);
@@ -80,15 +80,23 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(Long id, PostUpdateRequest request){
-        Post post = findPostById(id);
+    public void updatePost(Long memberId, Long postId, PostUpdateRequest request){
+        Post post = findPostById(postId);
+        validateOwner(post, memberId);
         post.update(request.title(), request.content());
     }
 
     @Transactional
-    public void deletePost(Long id) {
-        findPostById(id); //게시글이 존재하는지 확인용
-        postRepository.deleteById(id);
+    public void deletePost(Long memberId, Long postId) {
+        Post post = findPostById(postId);
+        validateOwner(post, memberId);
+        postRepository.delete(post);
+    }
+
+    private void validateOwner(Post post, Long memberId){
+        if(!post.isWrittenBy(memberId)){
+            throw new InvalidPostException(PostErrorCode.NOT_POST_OWNER);
+        }
     }
 
     @Transactional

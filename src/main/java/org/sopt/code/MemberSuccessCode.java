@@ -3,8 +3,7 @@ package org.sopt.code;
 import org.springframework.http.HttpStatus;
 
 public enum MemberSuccessCode implements SuccessCode{
-    MEMBER_CREATED(HttpStatus.CREATED, 201, "회원이 생성되었습니다."),
-    MEMBER_DELETED(HttpStatus.OK, 200, "회원이 삭제되었습니다.");
+    MEMBER_READ(HttpStatus.OK, 200, "회원 조회에 성공했습니다.");
 
     private final HttpStatus httpStatus;
     private final int code;

@@ -27,19 +27,22 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PostRepository postRepository;
     private final TokenParser tokenParser;
+    private final TokenBlacklist tokenBlacklist;
 
     public AuthService(MemberRepository memberRepository,
                        PasswordEncoder passwordEncoder,
                        TokenIssuer tokenIssuer,
                        RefreshTokenRepository refreshTokenRepository,
                        PostRepository postRepository,
-                       TokenParser tokenParser) {
+                       TokenParser tokenParser,
+                       TokenBlacklist tokenBlacklist) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenIssuer = tokenIssuer;
         this.refreshTokenRepository = refreshTokenRepository;
         this.postRepository = postRepository;
         this.tokenParser = tokenParser;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
     @Transactional
@@ -85,12 +88,13 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(Long memberId) {
+    public void logout(Long memberId, TokenClaims accessToken) {
         refreshTokenRepository.deleteByMemberId(memberId);
+        tokenBlacklist.add(accessToken.tokenId(), accessToken.expiresAt());
     }
 
     @Transactional
-    public void withdraw(Long memberId) {
+    public void withdraw(Long memberId, TokenClaims accessToken) {
         if (!memberRepository.existsById(memberId)) {
             throw new MemberNotFoundException();
         }
@@ -98,6 +102,7 @@ public class AuthService {
         postRepository.deleteAllByMemberId(memberId);        // 내 게시글 삭제, 게시글의 좋아요는 DB cascade
         refreshTokenRepository.deleteByMemberId(memberId);
         memberRepository.deleteById(memberId);               // 내 좋아요 행은 DB cascade
+        tokenBlacklist.add(accessToken.tokenId(), accessToken.expiresAt());
     }
 
     private AuthTokens issueTokens(Member member) {

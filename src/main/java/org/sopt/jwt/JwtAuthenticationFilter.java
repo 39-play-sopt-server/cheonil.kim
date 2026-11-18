@@ -21,9 +21,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final TokenParser tokenParser;
+    private final TokenBlacklist tokenBlacklist;
 
-    public JwtAuthenticationFilter(TokenParser tokenParser) {
+    public JwtAuthenticationFilter(TokenParser tokenParser, TokenBlacklist tokenBlacklist) {
         this.tokenParser = tokenParser;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
     @Override
@@ -38,11 +40,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if(claims.type() != TokenType.ACCESS){
                     throw new AuthException(AuthErrorCode.INVALID_TOKEN_TYPE);
                 }
+                if (tokenBlacklist.contains(claims.tokenId())) {
+                    throw new AuthException(AuthErrorCode.REVOKED_TOKEN);
+                }
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         claims.memberId(),
                         null,
                         List.of(new SimpleGrantedAuthority(claims.role().authority()))
                 );
+                // 로그아웃, 탈퇴 시 현재 토큰의 jti와 만료 시각을 꺼낼 수 있도록 claim을 함께 보관
+                authentication.setDetails(claims);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (AuthException e) {
                 request.setAttribute(AUTH_ERROR_ATTRIBUTE, e.getErrorCode());

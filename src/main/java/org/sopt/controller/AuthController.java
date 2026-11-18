@@ -9,10 +9,11 @@ import org.sopt.dto.response.MemberResponse;
 import org.sopt.dto.response.TokenResponse;
 import org.sopt.jwt.AuthTokens;
 import org.sopt.jwt.RefreshTokenCookieManager;
+import org.sopt.jwt.TokenClaims;
 import org.sopt.service.AuthService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,14 +48,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<BaseResponse<Void>> logout(@AuthenticationPrincipal Long memberId) {
-        authService.logout(memberId);
+    public ResponseEntity<BaseResponse<Void>> logout(Authentication authentication) {
+        authService.logout(memberIdOf(authentication), accessTokenOf(authentication));
         return withExpiredCookie(AuthSuccessCode.LOGOUT_SUCCESS);
     }
 
     @DeleteMapping("/withdraw")
-    public ResponseEntity<BaseResponse<Void>> withdraw(@AuthenticationPrincipal Long memberId) {
-        authService.withdraw(memberId);
+    public ResponseEntity<BaseResponse<Void>> withdraw(Authentication authentication) {
+        authService.withdraw(memberIdOf(authentication), accessTokenOf(authentication));
         return withExpiredCookie(AuthSuccessCode.WITHDRAW_SUCCESS);
     }
 
@@ -71,5 +72,13 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, cookieManager.expire().toString())
                 .body(BaseResponse.success(code));
     }
-}
 
+    // JwtAuthenticationFilter가 principal에 회원 ID, details에 Access Token claim을 담아둠
+    private Long memberIdOf(Authentication authentication) {
+        return (Long) authentication.getPrincipal();
+    }
+
+    private TokenClaims accessTokenOf(Authentication authentication) {
+        return (TokenClaims) authentication.getDetails();
+    }
+}

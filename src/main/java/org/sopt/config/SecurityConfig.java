@@ -2,6 +2,7 @@ package org.sopt.config;
 
 import org.sopt.jwt.JwtAuthenticationEntryPoint;
 import org.sopt.jwt.JwtAuthenticationFilter;
+import org.sopt.jwt.TokenBlacklist;
 import org.sopt.jwt.TokenParser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,10 +22,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final TokenParser tokenParser;
+    private final TokenBlacklist tokenBlacklist;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    public SecurityConfig(TokenParser tokenParser, JwtAuthenticationEntryPoint authenticationEntryPoint) {
+    public SecurityConfig(TokenParser tokenParser,
+                          TokenBlacklist tokenBlacklist,
+                          JwtAuthenticationEntryPoint authenticationEntryPoint) {
         this.tokenParser=tokenParser;
+        this.tokenBlacklist=tokenBlacklist;
         this.authenticationEntryPoint=authenticationEntryPoint;
     }
 
@@ -48,7 +53,7 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(authenticationEntryPoint))
                 // JWT 인증 필터 추가
-                .addFilterBefore(new JwtAuthenticationFilter(tokenParser),
+                .addFilterBefore(new JwtAuthenticationFilter(tokenParser, tokenBlacklist),
                         UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

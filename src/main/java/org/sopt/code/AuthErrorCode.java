@@ -10,6 +10,7 @@ public enum AuthErrorCode implements ErrorCode{
     INVALID_TOKEN_TYPE(HttpStatus.UNAUTHORIZED, 401, "잘못된 유형의 토큰입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, 401, "리프레시 토큰이 없습니다. 다시 로그인해 주세요."),
     REFRESH_TOKEN_REUSED(HttpStatus.UNAUTHORIZED, 401, "이미 사용된 리프레시 토큰입니다. 다시 로그인해 주세요."),
+    REVOKED_TOKEN(HttpStatus.UNAUTHORIZED, 401, "로그아웃되었거나 무효화된 토큰입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, 403, "접근 권한이 없습니다.");
 
     private final HttpStatus httpStatus;

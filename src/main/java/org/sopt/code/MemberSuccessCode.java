@@ -3,7 +3,8 @@ package org.sopt.code;
 import org.springframework.http.HttpStatus;
 
 public enum MemberSuccessCode implements SuccessCode{
-    MEMBER_READ(HttpStatus.OK, 200, "회원 조회에 성공했습니다.");
+    MEMBER_READ(HttpStatus.OK, 200, "회원 조회에 성공했습니다."),
+    MEMBER_LIST_READ(HttpStatus.OK, 200, "회원 목록 조회에 성공했습니다.");
 
     private final HttpStatus httpStatus;
     private final int code;

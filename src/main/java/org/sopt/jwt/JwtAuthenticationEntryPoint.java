@@ -4,22 +4,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.sopt.code.AuthErrorCode;
 import org.sopt.code.ErrorCode;
-import org.sopt.dto.BaseResponse;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
+// 인증이 필요한 API에 인증 정보 없이 접근했을 때 (401)
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final JsonMapper jsonMapper;
+    private final SecurityErrorResponseWriter errorResponseWriter;
 
-    public JwtAuthenticationEntryPoint(JsonMapper jsonMapper){
-        this.jsonMapper = jsonMapper;
+    public JwtAuthenticationEntryPoint(SecurityErrorResponseWriter errorResponseWriter){
+        this.errorResponseWriter = errorResponseWriter;
     }
 
     @Override
@@ -29,10 +26,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         ErrorCode errorCode = request.getAttribute(JwtAuthenticationFilter.AUTH_ERROR_ATTRIBUTE) instanceof ErrorCode code
                 ? code
                 : AuthErrorCode.UNAUTHENTICATED;
-
-        response.setStatus(errorCode.getHttpStatus().value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        jsonMapper.writeValue(response.getWriter(), BaseResponse.fail(errorCode));
+        errorResponseWriter.write(response, errorCode);
     }
 }

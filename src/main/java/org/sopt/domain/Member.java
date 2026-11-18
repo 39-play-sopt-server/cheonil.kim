@@ -35,14 +35,20 @@ public class Member extends BaseEntity{
 
     protected Member() {}
 
-    private Member(String email, String name, String password){
+    private Member(String email, String name, String password, Role role){
         this.name=name;
         this.email=email;
         this.password=password;
+        this.role=role;
     }
 
     public static Member create(String email, String name, String password){
-        return new Member(email,name, password);
+        return new Member(email, name, password, Role.USER);
+    }
+
+    // 회원가입 API로는 만들 수 없고, 서버 시작 시 AdminAccountInitializer만 사용
+    public static Member createAdmin(String email, String name, String password){
+        return new Member(email, name, password, Role.ADMIN);
     }
 
     public Long getId() {return this.id;}
